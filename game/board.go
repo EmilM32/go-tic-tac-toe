@@ -13,21 +13,18 @@ func NewBoard() *Board {
 }
 
 func (b *Board) CheckWin(symbol rune) bool {
-	// Sprawdzanie wierszy
 	for i := 0; i < 3; i++ {
 		if b.Cells[i][0] == symbol && b.Cells[i][1] == symbol && b.Cells[i][2] == symbol {
 			return true
 		}
 	}
 
-	// Sprawdzanie kolumn
 	for i := 0; i < 3; i++ {
 		if b.Cells[0][i] == symbol && b.Cells[1][i] == symbol && b.Cells[2][i] == symbol {
 			return true
 		}
 	}
 
-	// Sprawdzanie przekątnych
 	if b.Cells[0][0] == symbol && b.Cells[1][1] == symbol && b.Cells[2][2] == symbol {
 		return true
 	}

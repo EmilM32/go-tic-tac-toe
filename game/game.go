@@ -10,74 +10,77 @@ import (
 
 type Game struct {
 	Board         *Board
-	CurrentPlayer rune
+	CurrentPlayer *Player
+	Player1       *Player
+	Player2       *Player
 }
 
-func NewGame() *Game {
+func NewGame(player1, player2 *Player) *Game {
 	return &Game{
 		Board:         NewBoard(),
-		CurrentPlayer: 'X',
+		CurrentPlayer: player1,
+		Player1:       player1,
+		Player2:       player2,
+	}
+}
+
+func (g *Game) switchPlayer(player1, player2 *Player) {
+	if g.CurrentPlayer == player1 {
+		g.CurrentPlayer = player2
+	} else {
+		g.CurrentPlayer = player1
 	}
 }
 
 func (b *Board) MakeMove(x int, y int, player *Player) error {
 	if b.Cells[x][y] != ' ' {
-		return fmt.Errorf("pole jest już zajęte")
+		return fmt.Errorf("Field is already occupied")
 	}
 
 	b.Cells[x][y] = player.Symbol
 	return nil
 }
 
-func (g *Game) PlayGame(player1, player2 *Player) {
+func (g *Game) PlayGame() {
 	scanner := bufio.NewScanner(os.Stdin)
-
-	var currentPlayer *Player = player1
 
 	for {
 		g.Board.PrintBoard()
-		fmt.Printf("Ruch gracza %s (wprowadź 'x y'): ", currentPlayer.Name)
+		fmt.Printf("%s (enter 'x, y'): ", g.CurrentPlayer.Name)
 		scanner.Scan()
 		move := scanner.Text()
 
 		coords := strings.Split(move, ",")
 		if len(coords) != 2 {
-			fmt.Println("Nieprawidłowy ruch")
+			fmt.Println("Incorrect movement")
 			continue
 		}
 
 		x, errX := strconv.Atoi(coords[0])
 		y, errY := strconv.Atoi(coords[1])
 		if errX != nil || errY != nil || x < 0 || x > 2 || y < 0 || y > 2 {
-			fmt.Println("Nieprawidłowy ruch")
+			fmt.Println("Incorrect movement")
 			continue
 		}
 
-		err := g.Board.MakeMove(x, y, currentPlayer)
+		err := g.Board.MakeMove(x, y, g.CurrentPlayer)
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
 
-		// Sprawdzenie warunków zwycięstwa
-		if g.Board.CheckWin(currentPlayer.Symbol) {
+		if g.Board.CheckWin(g.CurrentPlayer.Symbol) {
 			g.Board.PrintBoard()
-			fmt.Printf("Wygrana gracza %s!\n", currentPlayer.Name)
+			fmt.Printf("%s won!\n", g.CurrentPlayer.Name)
 			break
 		}
 
-		// Sprawdzenie remisu
 		if g.Board.IsFull() {
 			g.Board.PrintBoard()
-			fmt.Println("Remis!")
+			fmt.Println("Draw!")
 			break
 		}
 
-		// Zmiana gracza
-		if currentPlayer == player1 {
-			currentPlayer = player2
-		} else {
-			currentPlayer = player1
-		}
+		g.switchPlayer(g.Player1, g.Player2)
 	}
 }
