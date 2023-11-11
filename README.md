@@ -10,6 +10,13 @@ To play the game, run the following command in the terminal:
 go run main.go
 ```
 
+## Testing
+To run the tests, run the following command in the terminal:
+
+```bash
+go test ./...
+```
+
 ## How to Play
 
 - The game starts with an empty 3x3 grid.

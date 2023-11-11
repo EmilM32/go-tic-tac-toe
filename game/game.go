@@ -24,11 +24,11 @@ func NewGame(player1, player2 *Player) *Game {
 	}
 }
 
-func (g *Game) switchPlayer(player1, player2 *Player) {
-	if g.CurrentPlayer == player1 {
-		g.CurrentPlayer = player2
+func (g *Game) switchPlayer() {
+	if g.CurrentPlayer == g.Player1 {
+		g.CurrentPlayer = g.Player2
 	} else {
-		g.CurrentPlayer = player1
+		g.CurrentPlayer = g.Player1
 	}
 }
 
@@ -81,6 +81,6 @@ func (g *Game) PlayGame() {
 			break
 		}
 
-		g.switchPlayer(g.Player1, g.Player2)
+		g.switchPlayer()
 	}
 }
